@@ -1,22 +1,33 @@
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
+const markdown = require('markdown').markdown;
 
 http.createServer(function (request, response) {
-  const route = getRouteFromRequest(request);
-  const mdFile = getFileFromRoute(route);
-  fs.readFile(mdFile, function (error, data) {
+  fs.readFile('template.html', function (error, templateData) {
     if (error) {
       serveErrorPage(error, response);
     } else {
-      serveContentPage(data, route, response);
+      renderTemplate(templateData, request, response);
     }
   });
 }).listen(8081);
 
-function serveContentPage(data, route, response) {
-  response.writeHead(200, {'Content-Type': 'text/plain'});
-  response.end(getContentFromData(data));
+function renderTemplate(templateData, request, response) {
+  const route = getRouteFromRequest(request);
+  const mdFile = getFileFromRoute(route);
+  fs.readFile(mdFile, function (error, mdContent) {
+    if (error) {
+      serveErrorPage(error, response);
+    } else {
+      serveContentPage(templateData, mdContent, route, response);
+    }
+  });
+}
+
+function serveContentPage(templateData, mdContent, route, response) {
+  response.writeHead(200, {'Content-Type': 'text/html'});
+  response.end(buildWebPage(templateData, mdContent));
   console.log(`200: served up ${route}`);
 }
 
@@ -26,8 +37,10 @@ function serveErrorPage(error, response) {
   console.error(`404: cannot find /${error.path}`);
 }
 
-function getContentFromData(data) {
-  return data.toString();
+function buildWebPage(templateData, mdContent) {
+  const content = markdown.toHTML(mdContent.toString());
+  const template = templateData.toString();
+  return template.replace('{{content}}', content);
 }
 
 function getRouteFromRequest(request) {
