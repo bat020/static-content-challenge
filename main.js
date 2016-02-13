@@ -1,24 +1,41 @@
-var http = require('http');
-var fs = require('fs');
-var url = require('url');
+const http = require('http');
+const url = require('url');
+const fs = require('fs');
 
 http.createServer(function (request, response) {
-
-  var pathname = url.parse(request.url).pathname;
-  console.log("Request for " + pathname + " received");
-
-  fs.readFile("content" + pathname + "/index.md", function (error, data) {
+  const route = getRouteFromRequest(request);
+  const mdFile = getFileFromRoute(route);
+  fs.readFile(mdFile, function (error, data) {
     if (error) {
-      response.writeHead(404, {'Content-Type': 'text/plain'});
-      response.end("404 error fetching " + pathname);
-      return console.error("404 error fetching " + pathname);
+      serveErrorPage(error, response);
     } else {
-      response.writeHead(200, {'Content-Type': 'text/plain'});
-      response.end("you asked for: " + pathname + "\n\nYOU GOT IT!");
+      serveContentPage(data, route, response);
     }
-    console.log("Asynchronous read: " + data.toString());
   });
-
 }).listen(8081);
+
+function serveContentPage(data, route, response) {
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  response.end(getContentFromData(data));
+  console.log(`200: served up ${route}`);
+}
+
+function serveErrorPage(error, response) {
+  response.writeHead(404, {'Content-Type': 'text/plain'});
+  response.end('404 error: cannot find that page');
+  console.error(`404: cannot find /${error.path}`);
+}
+
+function getContentFromData(data) {
+  return data.toString();
+}
+
+function getRouteFromRequest(request) {
+  return url.parse(request.url).pathname;
+}
+
+function getFileFromRoute(route) {
+  return `content${route}/index.md`;
+}
 
 console.log('Server running at http://127.0.0.1:8081/');
