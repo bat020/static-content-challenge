@@ -1,54 +1,60 @@
+// declare dependencies
+
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
+
 const markdown = require('markdown').markdown;
 
-http.createServer(function (request, response) {
-  fs.readFile('template.html', function (error, templateData) {
-    if (error) {
-      serveErrorPage(error, response);
-    } else {
-      renderTemplate(templateData, request, response);
-    }
+// main loop
+
+http.createServer((request, response) => {
+  fs.readFile('template.html', (error, template) => {
+    template = error ? '' : template.toString();
+    const route = getRoute(request);
+    renderTemplate(template, route, response);
   });
 }).listen(8081);
 
-function renderTemplate(templateData, request, response) {
-  const route = getRouteFromRequest(request);
-  const mdFile = getFileFromRoute(route);
-  fs.readFile(mdFile, function (error, mdContent) {
-    if (error) {
-      serveErrorPage(error, response);
-    } else {
-      serveContentPage(templateData, mdContent, route, response);
-    }
+function renderTemplate(template, route, response) {
+  fs.readFile(getPath(route), (error, content) => {
+    content = error ? '' : content.toString();
+    const page = buildPage(template, content);
+    servePage(page, route, response);
   });
 }
 
-function serveContentPage(templateData, mdContent, route, response) {
-  response.writeHead(200, {'Content-Type': 'text/html'});
-  response.end(buildWebPage(templateData, mdContent));
-  console.log(`200: served up ${route}`);
+function servePage(page, route, response) {
+  const status = page ? 200 : 404;
+  response.writeHead(status, {'Content-Type': 'text/html'});
+  response.end(page || errorPage());
+  console.log(`GET ${route} => status code ${status}`);
 }
 
-function serveErrorPage(error, response) {
-  response.writeHead(404, {'Content-Type': 'text/plain'});
-  response.end('404 error: cannot find that page');
-  console.error(`404: cannot find /${error.path}`);
+// page building functions
+
+function buildPage(template, content) {
+  if (!template || !content) return '';
+  const html = markdown.toHTML(content);
+  return template.replace('{{content}}', html);
 }
 
-function buildWebPage(templateData, mdContent) {
-  const content = markdown.toHTML(mdContent.toString());
-  const template = templateData.toString();
-  return template.replace('{{content}}', content);
+function errorPage() {
+  return '<!doctype html>\n<html>\n<head><title>Welcome to ' +
+    'Acme</title></head>\n<body>\n<h1>404 error</h1>\n' +
+    '<p>That page does not exist.<p>\n</body></html>';
 }
 
-function getRouteFromRequest(request) {
+// miscellaneous helpers
+
+function getRoute(request) {
   return url.parse(request.url).pathname;
 }
 
-function getFileFromRoute(route) {
+function getPath(route) {
   return `content${route}/index.md`;
 }
 
-console.log('Server running at http://127.0.0.1:8081/');
+// initial console message
+
+console.log('Server running at http://localhost:8081');
