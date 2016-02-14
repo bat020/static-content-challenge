@@ -1,0 +1,26 @@
+{
+  "name": "static-content-challenge",
+  "version": "1.0.0",
+  "description": "* clone this repo to install * `$ node main.js` to run the server * `$ mocha` to run the tests",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "markdown": "^0.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bat020/static-content-challenge.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bat020/static-content-challenge/issues"
+  },
+  "homepage": "https://github.com/bat020/static-content-challenge#readme"
+}
