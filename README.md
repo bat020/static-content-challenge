@@ -1,8 +1,9 @@
 # Static Content challenge
 
 * clone this repo to install
-* `$ node server.js` to run the server
+* `$ node server` to run the server
 * `$ mocha` to run the tests
+* live at [bat020-static.herokuapp.com](https://bat020-static.herokuapp.com/)
 
 ### Notes
 
@@ -12,8 +13,8 @@ The code is in `server.js`, the bulk of it comprising a short chain of callbacks
 
 The tests are in `test/test.js` and operate with a markdown file `test/test.md`. This is copied into `content/_test` before the suite runs and torn down afterwards. My thinking here is that the tests shouldn't depend on particular names or files being present in the `content` folder.
 
-**Anindya Bhattacharyya**  
-February 2016  
+*Anindya Bhattacharyya*  
+*February 2016*  
 bat020@gmail.com
 
 challenge originally cloned from [github.com/jayfresh/static-content-challenge](https://github.com/jayfresh/static-content-challenge)
