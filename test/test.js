@@ -10,8 +10,8 @@ const assert = require('assert');
 
 describe('Static Content challenge', () => {
 
-  before((done) => createTestRoute(done));
-  after(() => destroyTestRoute());
+  before(createTestRoute);
+  after(destroyTestRoute);
 
   it('should return status code 200 for a valid URL', (done) => {
     http.get('http://localhost:8081/_test', (response) => {
