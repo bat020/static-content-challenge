@@ -1,6 +1,6 @@
 // declare dependencies
 
-require('../main');
+require('../server');
 
 const fs = require('fs');
 const http = require('http');
