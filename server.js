@@ -13,7 +13,7 @@ http.createServer((request, response) => {
     const route = getRoute(request);
     renderTemplate(template, route, response);
   });
-}).listen(8081);
+}).listen(process.env.PORT || 8081);
 
 function renderTemplate(template, route, response) {
   fs.readFile(getPath(route), (error, content) => {
