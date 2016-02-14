@@ -1,17 +1,19 @@
 # Static Content challenge
 
-**NB: Please do not fork this repository, to avoid your solution being visible from this repository's GitHub page. Please clone this repository and submit your solution as a separate repository.**
+* clone this repo to install
+* `$ node main.js` to run the server
+* `$ mocha` to run the tests
 
-The challenge here is to create a node.js application that displays HTML pages at URLs that match the names of the folders in the `content` folder. The content of these pages should come from a combination of the template HTML file and a markdown file containing the content.
+### Notes
 
-For example, for a folder called `about-page`, a request to `/about-page` would return a HTML page created from the `template.html` template and the `about-page/index.md` content file. The `template.html` file contains a `{{content}}` placeholder that would be replaced by the content for each page.
+This is the first time I've used node.js so I decided to code the server from scratch rather than working with Express or a similar framework. The only third-party library I've used is npm's [markdown](https://github.com/evilstreak/markdown-js) package, plus Mocha for testing.
 
-This repository contains a `template.html` template file and a `content` folder with sub-folders containing `index.md` markdown files.
+The code is in `main.js`, the bulk of it comprising a short chain of callbacks. On receiving a request, the server fetches the template, then fetches the content, then serves up the appropriate HTML (or an error page if anything has failed along the way).
 
-The application should be shipped with three tests:
+The tests are in `test/test.js` and operate with a markdown file `test/test.md`. This is copied to `content/_test/index.md` before the suite runs and torn down afterwards. My thinking here is that the tests shouldn't depend on particular names or files being present in the `content` folder.
 
-* one that verifies that requests to valid URLs return a 200 HTTP status code
-* one that verifies that requests to valid URLS return a body that contains the HTML generated from the relevant `index.md` markdown file
-* one that verifies that requests to URLs that do not match content folders return a 404 HTTP status code
+*Anindya Bhattacharyya*  
+*February 2016*  
+*bat020@gmail.com*
 
-Your application may make use of open-source code libraries. It is entirely up to you how the application performs the challenge.
+challenge originally cloned from [github.com/jayfresh/static-content-challenge](https://github.com/jayfresh/static-content-challenge)
